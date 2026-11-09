@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,30 +13,14 @@ export default function RegisterPage() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-  async function loadEvent() {
-    const { data, error } = await supabase.rpc("get_registration_status");
+    async function loadEvent() {
+      const { data, error } = await supabase.rpc(
+        "get_registration_status"
+      );
 
-    if (!error && data && data.length > 0) {
-      setEventId(data[0].event_id);
-      setIsOpen(data[0].registration_open);
-    }
-
-    setLoading(false);
-  }
-
-  loadEvent();
-}, []);
-    
-const { data, error } = await supabase
-  .rpc("get_registration_status");
-
-if (!error && data && data.length > 0) {
-  setEventId(data[0].event_id);
-  setIsOpen(data[0].registration_open);
-}
-      
-        setEventId(data.id);
-        setIsOpen(data.registration_open);
+      if (!error && data && data.length > 0) {
+        setEventId(data[0].event_id);
+        setIsOpen(data[0].registration_open);
       }
 
       setLoading(false);
@@ -110,3 +95,4 @@ if (!error && data && data.length > 0) {
     </main>
   );
 }
+
