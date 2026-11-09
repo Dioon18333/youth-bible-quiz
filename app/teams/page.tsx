@@ -31,20 +31,19 @@ export default function TeamsPage() {
       const id = events[0].event_id;
       setEventId(id);
 
-      const { data, error: teamsError } = await supabase.rpc(
-        "get_revealed_teams",
-        { p_event_id: id }
-      );
+     const { data, error: teamsError } = await supabase.rpc(
+  "get_revealed_teams",
+  { p_event_id: id }
+);
 
-      if (teamsError) {
+if (teamsError) {
   setErrorMessage("Database error: " + teamsError.message);
+} else if (data && data.length > 0) {
+  setTeams(data);
+  setRevealed(true);
 }
-      } else if (data && data.length > 0) {
-        setTeams(data);
-        setRevealed(true);
-      }
 
-      setLoading(false);
+setLoading(false);
     }
 
     loadTeams();
