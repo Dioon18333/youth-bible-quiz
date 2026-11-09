@@ -37,7 +37,7 @@ export default function TeamsPage() {
 );
 
 if (teamsError) {
-  if (teamsError.message.includes("teams have not been revealed yet")) {
+  if (teamsError.message.toLowerCase().includes("revealed")) {
     setRevealed(false);
   } else {
     setErrorMessage("Database error: " + teamsError.message);
@@ -46,7 +46,6 @@ if (teamsError) {
   setTeams(data);
   setRevealed(true);
 }
-
 setLoading(false);
     }
 
