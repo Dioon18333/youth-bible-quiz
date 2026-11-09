@@ -1,14 +1,57 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
+  const [eventId, setEventId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    async function loadEvent() {
+      const { data, error } = await supabase
+        .from("events")
+        .select("id, registration_open")
+        .eq("name", "Youth Bible Quiz")
+        .limit(1)
+        .maybeSingle();
+
+      if (!error && data) {
+        setEventId(data.id);
+        setIsOpen(data.registration_open);
+      }
+
+      setLoading(false);
+    }
+
+    loadEvent();
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    alert("Registration system is being connected. Please check back soon!");
+    if (!eventId || !isOpen) return;
+
+    setSubmitting(true);
+    setMessage("");
+
+    const { error } = await supabase.rpc("register_participant", {
+      p_event_id: eventId,
+      p_name: name
+    });
+
+    if (error) {
+      setMessage(error.message);
+    } else {
+      setMessage("Registration successful! You're on the list.");
+      setName("");
+    }
+
+    setSubmitting(false);
   }
 
   return (
@@ -18,27 +61,36 @@ export default function RegisterPage() {
 
         <h1>Join the Quiz!</h1>
 
-        <p>
-          Enter your name below to register for Youth Bible Quiz.
-        </p>
+        {loading ? (
+          <p>Loading event...</p>
+        ) : !isOpen ? (
+          <p>Registration is currently closed. Please check back later.</p>
+        ) : (
+          <>
+            <p>Enter your name to register for Youth Bible Quiz.</p>
 
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="name">Full name</label>
+            <form onSubmit={handleSubmit}>
+              <label htmlFor="name">Full name</label>
 
-          <input
-            id="name"
-            type="text"
-            placeholder="Enter your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            maxLength={80}
-          />
+              <input
+                id="name"
+                type="text"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                minLength={2}
+                maxLength={80}
+              />
 
-          <button type="submit" disabled={!name.trim()}>
-            Register
-          </button>
-        </form>
+              <button type="submit" disabled={submitting || !name.trim()}>
+                {submitting ? "Registering..." : "Register"}
+              </button>
+            </form>
+          </>
+        )}
+
+        {message && <p role="status">{message}</p>}
 
         <small>Your team will be randomly assigned.</small>
       </div>
