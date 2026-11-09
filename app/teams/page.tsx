@@ -37,7 +37,8 @@ export default function TeamsPage() {
       );
 
       if (teamsError) {
-        setErrorMessage("Could not load the teams. Please try again.");
+  setErrorMessage("Database error: " + teamsError.message);
+}
       } else if (data && data.length > 0) {
         setTeams(data);
         setRevealed(true);
