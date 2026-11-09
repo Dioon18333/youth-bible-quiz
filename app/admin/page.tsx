@@ -257,7 +257,7 @@ export default function AdminDashboard() {
                       .filter((team) => team.team_number === number)
                       .map((team, index) => (
                         <p key={`${number}-${index}`}>
-                          {team.registrations?.participant_name}
+                          {team.registrations?.[0]?.participant_name}
                         </p>
                       ))}
                   </div>
