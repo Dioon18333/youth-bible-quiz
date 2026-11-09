@@ -13,14 +13,15 @@ export default function RegisterPage() {
 
   useEffect(() => {
     async function loadEvent() {
-      const { data, error } = await supabase
-        .from("events")
-        .select("id, registration_open")
-        .eq("name", "Youth Bible Quiz")
-        .limit(1)
-        .maybeSingle();
+    
+const { data, error } = await supabase
+  .rpc("get_registration_status");
 
-      if (!error && data) {
+if (!error && data && data.length > 0) {
+  setEventId(data[0].event_id);
+  setIsOpen(data[0].registration_open);
+}
+      
         setEventId(data.id);
         setIsOpen(data.registration_open);
       }
