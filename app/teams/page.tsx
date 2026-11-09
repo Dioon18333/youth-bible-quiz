@@ -46,7 +46,6 @@ if (teamsError) {
   setTeams(data);
   setRevealed(true);
 }
-}
 
 setLoading(false);
     }
