@@ -306,3 +306,20 @@ a {
     font-size: 25px;
   }
 }
+.team-preview {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.team-preview h3 {
+  margin-bottom: 12px;
+  color: #4f46e5;
+}
+
+.team-preview p {
+  padding: 7px 0;
+  color: #334155;
+}
