@@ -160,7 +160,39 @@ export default function AdminDashboard() {
 
     setBusy(false);
   }
+async function resetEvent() {
+  if (!event || busy) return;
 
+  if (!window.confirm(
+    "Are you sure? This will permanently delete all registrations and generated teams for this event."
+  )) {
+    return;
+  }
+
+  setBusy(true);
+  setMessage("");
+
+  const { error } = await supabase.rpc(
+    "reset_quiz_event",
+    { p_event_id: event.id }
+  );
+
+  if (error) {
+    setMessage(error.message);
+  } else {
+    setEvent({
+      ...event,
+      registration_open: false,
+      teams_generated: false,
+      teams_revealed: false
+    });
+    setTeams([]);
+    setCount(0);
+    setMessage("Event reset successfully. Registration is closed.");
+  }
+
+  setBusy(false);
+}
   async function logout() {
     await supabase.auth.signOut();
     router.replace("/admin/login");
@@ -244,6 +276,17 @@ export default function AdminDashboard() {
             )}
           </section>
 
+         <section className="admin-card">
+  <h2>Event Reset</h2>
+  <p>Clear all registrations and team assignments.</p>
+  <button
+    className="admin-action"
+    onClick={resetEvent}
+    disabled={busy}
+  >
+    {busy ? "Please wait..." : "Reset Event"}
+  </button>
+</section> 
           {event.teams_generated && (
             <section className="admin-card">
               <h2>Private Team Preview</h2>
