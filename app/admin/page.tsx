@@ -16,7 +16,7 @@ type TeamRow = {
   team_number: number;
   registrations: {
     participant_name: string;
-  } | null;
+  }[] | null;
 };
 
 export default function AdminDashboard() {
