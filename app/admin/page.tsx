@@ -18,7 +18,11 @@ type TeamRow = {
     participant_name: string;
   }[] | null;
 };
-
+type Participant = {
+  id: string;
+  participant_name: string;
+  created_at: string;
+};
 export default function AdminDashboard() {
   const router = useRouter();
 
