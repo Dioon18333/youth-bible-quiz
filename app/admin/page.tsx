@@ -47,7 +47,35 @@ async function loadParticipants(eventId: string) {
     .select("id, participant_name, created_at")
     .eq("event_id", eventId)
     .order("created_at", { ascending: true });
+async function removeParticipant(id: string) {
+  if (!window.confirm("Are you sure you want to remove this participant?")) {
+    return;
+  }
 
+  setBusy(true);
+  setMessage("");
+
+  const { error } = await supabase.rpc(
+    "remove_quiz_participant",
+    { p_registration_id: id }
+  );
+
+  if (error) {
+    setMessage(error.message);
+  } else if (event) {
+    await loadParticipants(event.id);
+
+    const { count: total } = await supabase
+      .from("registrations")
+      .select("*", { count: "exact", head: true })
+      .eq("event_id", event.id);
+
+    setCount(total || 0);
+    setMessage("Participant removed successfully.");
+  }
+
+  setBusy(false);
+}
   if (error) {
     setMessage("Could not load registered participants.");
     return;
