@@ -29,6 +29,8 @@ export default function AdminDashboard() {
   const [event, setEvent] = useState<EventData | null>(null);
   const [count, setCount] = useState(0);
   const [teams, setTeams] = useState<TeamRow[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>([]);
+const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
@@ -39,7 +41,20 @@ export default function AdminDashboard() {
       .select("team_number, registrations(participant_name)")
       .eq("event_id", eventId)
       .order("team_number");
+async function loadParticipants(eventId: string) {
+  const { data, error } = await supabase
+    .from("registrations")
+    .select("id, participant_name, created_at")
+    .eq("event_id", eventId)
+    .order("created_at", { ascending: true });
 
+  if (error) {
+    setMessage("Could not load registered participants.");
+    return;
+  }
+
+  setParticipants((data || []) as Participant[]);
+}
     if (error) {
       setMessage("Could not load team preview.");
       return;
@@ -80,7 +95,9 @@ export default function AdminDashboard() {
       if (!countError) {
         setCount(total || 0);
       }
-
+      
+      await loadParticipants(data.id);
+      
       if (data.teams_generated) {
         await loadTeams(data.id);
       }
