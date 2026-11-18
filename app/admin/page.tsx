@@ -292,6 +292,41 @@ async function resetEvent() {
           </section>
 
           <section className="admin-card">
+            <section className="admin-card">
+  <h2>Registered Participants</h2>
+
+  <p>Total registered: {participants.length}</p>
+
+  <input
+    type="text"
+    placeholder="Search participants..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+  />
+
+  {participants
+    .filter((participant) =>
+      participant.participant_name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    )
+    .map((participant) => (
+      <div key={participant.id} className="admin-stat">
+        <span>{participant.participant_name}</span>
+
+        <button
+          onClick={() => removeParticipant(participant.id)}
+          disabled={busy || event?.teams_generated}
+        >
+          Remove
+        </button>
+      </div>
+    ))}
+
+  {participants.length === 0 && (
+    <p>No participants have registered yet.</p>
+  )}
+</section>
             <h2>Team Management</h2>
 
             <div className="admin-stat">
