@@ -35,23 +35,65 @@ const [searchTerm, setSearchTerm] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
 
-  async function loadTeams(eventId: string) {
-    const { data, error } = await supabase
-      .from("teams")
-      .select("team_number, registrations(participant_name)")
-      .eq("event_id", eventId)
-      .order("team_number");
+ async function loadTeams(eventId: string) {
+  const { data, error } = await supabase
+    .from("teams")
+    .select("team_number, registrations(participant_name)")
+    .eq("event_id", eventId)
+    .order("team_number");
+
+  if (error) {
+    setMessage("Could not load team preview.");
+    return;
+  }
+
+  setTeams((data || []) as TeamRow[]);
+}
+
 async function loadParticipants(eventId: string) {
   const { data, error } = await supabase
     .from("registrations")
     .select("id, participant_name, created_at")
     .eq("event_id", eventId)
     .order("created_at", { ascending: true });
+
+  if (error) {
+    setMessage("Could not load registered participants.");
+    return;
+  }
+
+  setParticipants((data || []) as Participant[]);
+}
+
 async function removeParticipant(id: string) {
   if (!window.confirm("Are you sure you want to remove this participant?")) {
     return;
   }
 
+  setBusy(true);
+  setMessage("");
+
+  const { error } = await supabase.rpc(
+    "remove_quiz_participant",
+    { p_registration_id: id }
+  );
+
+  if (error) {
+    setMessage(error.message);
+  } else if (event) {
+    await loadParticipants(event.id);
+
+    const { count: total } = await supabase
+      .from("registrations")
+      .select("*", { count: "exact", head: true })
+      .eq("event_id", event.id);
+
+    setCount(total || 0);
+    setMessage("Participant removed successfully.");
+  }
+
+  setBusy(false);
+}
   setBusy(true);
   setMessage("");
 
