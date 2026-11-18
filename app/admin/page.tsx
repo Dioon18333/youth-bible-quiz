@@ -94,8 +94,6 @@ async function removeParticipant(id: string) {
 
   setBusy(false);
 }
-  setBusy(true);
-  setMessage("");
 
   const { error } = await supabase.rpc(
     "remove_quiz_participant",
