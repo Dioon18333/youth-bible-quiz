@@ -447,7 +447,8 @@ export default function AdminDashboard() {
         )}
       </section>
 
-      {/* PRIVATE TEAM PREVIEW */}
+     
+            {/* PRIVATE TEAM PREVIEW */}
       {event.teams_generated && (
         <section className="admin-card">
           <h2>Private Team Preview</h2>
@@ -457,10 +458,9 @@ export default function AdminDashboard() {
               <div>
                 <strong>Team {team.team_number}</strong>
 
-               {team.registrations && (
-  <p>{team.registrations.participant_name}</p>
-)}
-                ))}
+                {team.registrations && (
+                  <p>{team.registrations.participant_name}</p>
+                )}
               </div>
             </div>
           ))}
