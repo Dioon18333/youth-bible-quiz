@@ -12,13 +12,13 @@ type EventData = {
   teams_generated: boolean;
   teams_revealed: boolean;
 };
-
 type TeamRow = {
   team_number: number;
   registrations: {
     participant_name: string;
-  } | null;
+  }[] | null;
 };
+
 type Participant = {
   id: string;
   participant_name: string;
@@ -458,9 +458,12 @@ export default function AdminDashboard() {
               <div>
                 <strong>Team {team.team_number}</strong>
 
-                {team.registrations && (
-                  <p>{team.registrations.participant_name}</p>
-                )}
+                {Array.isArray(team.registrations) &&
+  team.registrations.map((registration, index) => (
+    <p key={index}>
+      {registration.participant_name}
+    </p>
+  ))}
               </div>
             </div>
           ))}
