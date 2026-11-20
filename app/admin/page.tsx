@@ -17,9 +17,8 @@ type TeamRow = {
   team_number: number;
   registrations: {
     participant_name: string;
-  }[] | null;
+  } | null;
 };
-
 type Participant = {
   id: string;
   participant_name: string;
@@ -458,10 +457,9 @@ export default function AdminDashboard() {
               <div>
                 <strong>Team {team.team_number}</strong>
 
-                {team.registrations?.map((registration, index) => (
-                  <p key={index}>
-                    {registration.participant_name}
-                  </p>
+               {team.registrations && (
+  <p>{team.registrations.participant_name}</p>
+)}
                 ))}
               </div>
             </div>
